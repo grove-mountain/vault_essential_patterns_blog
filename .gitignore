@@ -1,0 +1,3 @@
+*.swp
+temp_creds
+policies/kv-user-template-policy.hcl
