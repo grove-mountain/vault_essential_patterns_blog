@@ -9,13 +9,15 @@ CREATE SCHEMA security;
 CREATE SCHEMA finance;
 CREATE SCHEMA engineering;
 
+ALTER ROLE postgres SET search_path TO public,it,hr,security,finance,engineering;
+ALTER ROLE vault_admin SET search_path TO public,it,hr,security,finance,engineering;
+
 GRANT ALL PRIVILEGES ON ALL TABLES 
 IN SCHEMA public,it,hr,security,finance,engineering 
 TO vault_admin 
 WITH GRANT OPTION;
 
 \c mother vault_admin
-SET search_path TO it,hr,security,finance,engineering,public;
 
 CREATE TABLE hr.people (
   email       varchar(40),

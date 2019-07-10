@@ -1,6 +1,8 @@
 UM_ACCESS=$(vault auth list -format=json | jq -r '.["ldap-um/"].accessor')
 MO_ACCESS=$(vault auth list -format=json | jq -r '.["ldap-mo/"].accessor')
 
+green "Generating a dynamic policy under policies/kv-user-template-policy.hcl.  This needs to be done because the ACL templates need to know the local LDAP auth method accessors"
+
 cat > policies/kv-user-template-policy.hcl << EOF
 # Allow full access to the current version of the kv-blog
 path "kv-blog/data/{{identity.entity.aliases.${UM_ACCESS}.name}}/*"
@@ -113,4 +115,4 @@ path "kv-blog/metadata/{{identity.entity.aliases.${MO_ACCESS}.name}}"
 }
 EOF
 
-vault policy write kv-user-template policies/kv-user-template-policy.hcl
+pe "vault policy write kv-user-template policies/kv-user-template-policy.hcl"

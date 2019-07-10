@@ -30,6 +30,7 @@ vault write auth/ldap-um/config \
     groupattr="${UM_GROUP_ATTR}" \
     insecure_tls=true
 
+echo
 green "Configure MemberOf group lookups"
 cat << EOF
 vault write auth/ldap-mo/config

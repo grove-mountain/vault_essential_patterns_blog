@@ -12,17 +12,10 @@ green "Test KV reads to allowed paths"
 pe "vault kv get kv-blog/it/servers/hr/root"
 pe "vault kv get kv-blog/it/routers/snmp/read-write"
 
+green "Negative Tests. Expect failures"
 yellow "Test KV writes to disallowed paths"
 pe "vault kv put kv-blog/hr/servers/hr/root password=rootntootn"
 pe "vault kv put kv-blog/hr/routers/snmp/read-write password=snortymcsnortyton"
 
-green "Yea, it doesn't work"
-
 yellow "Test access to database endpoints"
 pe "vault read db-blog/creds/mother-full-read-1m"
-
-green "Yea, it doesn't work"
-
-
-
-

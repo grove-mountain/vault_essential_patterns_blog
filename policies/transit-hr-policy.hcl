@@ -3,9 +3,9 @@ path "transit-blog/keys/hr" {
 }
 
 path "transit-blog/encrypt/hr" {
-  capabilities = [ "create", "read" ]
+  capabilities = [ "create", "read", "update" ]
 }
 
 path "transit-blog/decrypt/hr" {
-  capabilities = [ "read" ]
+  capabilities = [ "create", "read", "update" ]
 }
