@@ -7,7 +7,7 @@ This was developed for Mac, but should work on any platform that supports Bash. 
 - [Vault](https://www.vaultproject.io/downloads.html)
 - [Docker](https://hub.docker.com/search/?type=edition&offering=community)
   - [Postgres image](https://hub.docker.com/_/postgres)
-  - [Custom OpenLDAP image](git clone https://github.com/grove-mountain/docker-ldap-server.git)
+  - Custom OpenLDAP image - git clone https://github.com/grove-mountain/docker-ldap-server.git
 - [jq](https://stedolan.github.io/jq/)
 
 
