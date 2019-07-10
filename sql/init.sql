@@ -28,7 +28,7 @@ CREATE TABLE hr.people (
 );
 
 INSERT INTO hr.people VALUES
-  ('alice@ourcorp.com', '123-45-6789', 'ssn', 'Alice', 'Inchains'),
+  ('alice@ourcorp.com', '123-45-6789', 'ssn', 'Alice', 'Enshanes'),
   ('bob@ourcorp.com', '234-56-7890', 'ssn', 'Bob', 'Paulson'),
   ('chun@ourcorp.com', '350322197001015332', 'cric', 'Chun', 'Li'),
   ('deepak@ourcorp.com', '0123 4567 8901', 'uidai', 'Deepak', 'Singh'),
