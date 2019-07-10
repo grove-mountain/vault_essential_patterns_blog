@@ -34,7 +34,7 @@ export PG_OPTIONS=""
 
 pe "enc_id=\$(vault write -field=ciphertext transit-blog/encrypt/hr plaintext=\$( base64 <<< \${user_id} ) )"
 
-pe "QUERY=\"UPDATE hr.people SET id='${enc_id}' WHERE email='alice@ourcorp.com'\""
+pe "QUERY=\"UPDATE hr.people SET id='\${enc_id}' WHERE email='alice@ourcorp.com'\""
 pe "psql"
 
 # Turn off headings and aligned output
@@ -48,7 +48,7 @@ pe "enc_user_id=\$(psql)"
 echo "enc_user_id = ${enc_user_id}"
 export PG_OPTIONS=""
 
-pe "user_id=\$(vault write -field=plaintext transit-blog/decrypt/hr ciphertext=${enc_user_id} | base64 --decode)"
+pe "user_id=\$(vault write -field=plaintext transit-blog/decrypt/hr ciphertext=\${enc_user_id} | base64 --decode)"
 pe "echo \${user_id}"
 
 green "Notice the value is still encrypted in the database.   It should only decrypted by your applications when needed to be displayed"

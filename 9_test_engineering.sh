@@ -3,11 +3,12 @@ shopt -s expand_aliases
 . env.sh
 
 unset PGUSER PGPASSWORD
+USERNAME=chun
 
 green "Logging in with the memberOf overlay, notice the path difference"
 yellow "Ensure the root token isn't being used"
 pe "unset VAULT_TOKEN"
-pe "vault login -method=ldap -path=ldap-mo username=chun password=${USER_PASSWORD}"
+pe "vault login -method=ldap -path=ldap-mo username=${USERNAME} password=${USER_PASSWORD}"
 
 green "Read out the dynamic DB credentials and store them as variables"
 echo
@@ -24,12 +25,14 @@ pe "set -o noglob"
 pe "QUERY='select * from engineering.catalog;'"
 pe "psql"
 
+green "Use the dynamic ACL policy to write to a KV location under this user name"
+pe "vault kv put ${KV_PATH}/${USERNAME}/passwords laptop=legleglegleg cameras=bigbagofnope"
+pe "vault kv get ${KV_PATH}/${USERNAME}/passwords"
 
 green "Negative Tests. Expect failures"
 yellow "Can these credentials be used to query the HR schema?"
 pe "QUERY='select * from hr.people;'"
 pe "psql"
-
 
 yellow "Can the Vault token read from other areas?"
 pe "vault read db-blog/creds/mother-full-read-1h"
