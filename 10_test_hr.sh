@@ -56,7 +56,7 @@ pe "QUERY=\"select * from hr.people\""
 pe "psql"
 
 yellow "If you want to re-run this demo, you should restart the database: docker kill postgres && ./1_init_db.sh"
-
+echo
 green "Negative Tests. Expect failures"
 
 yellow "Try to query the engineering schema from here."
