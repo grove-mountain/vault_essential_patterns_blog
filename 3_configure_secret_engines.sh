@@ -1,13 +1,17 @@
 . env.sh 
 
-# Configure KV V2 engine
+green "Enable the KV V2 Secret Engine"
+pe "vault secrets enable -path=${KV_PATH} -version=${KV_VERSION} kv"
 
-# Configure Transit engine
+green "Enable/configure the Transit Secret Engine (Encryption as a Service)"
+pe "vault secrets enable -path=${TRANSIT_PATH} transit"
 
 green "Create a transit key for the HR team."
 pe "vault write -f ${TRANSIT_PATH}/keys/hr"
 
-# Configure database engine
+green "Enable/configure database engine"
+pe "vault secrets enable -path=${DB_PATH} database"
+
 green "Configure the account that Vault will use to manage credentials in Postgres."
 cat << EOF
 vault write ${DB_PATH}/config/${PGDATABASE} 
@@ -18,7 +22,6 @@ vault write ${DB_PATH}/config/${PGDATABASE}
     password="${VAULT_ADMIN_PW}"
 EOF
 p
-
 vault write ${DB_PATH}/config/${PGDATABASE} \
     plugin_name=postgresql-database-plugin \
     allowed_roles=* \
