@@ -65,7 +65,7 @@ pe "QUERY=\"select * from engineering.catalog\""
 pe "psql"
 
 yellow "Can the Vault token read from other areas?"
-pe "vault read db-blog/creds/mother-full-read-1m"
+pe "vault read db-blog/creds/mother-full-read-1h"
 pe "vault kv get kv-blog/it/servers/hr/root"
 
 yellow "If you want to re-run this demo, you should restart the database: docker kill postgres && ./1_launch_db.sh"
