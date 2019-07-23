@@ -1,5 +1,16 @@
-# This probably only works on Macs, so will have to be adjusted for other systems
-export IP_ADDRESS=$(ipconfig getifaddr en0)
+# env.sh -- Environment variables to assist with this demo
+
+# This is designed to be either run from a Mac or via the included CentOS vagrant host
+# Modify accordingly to run on your local system if outside these bounds
+case ${OSTYPE} in
+  darwin*)
+    IP_ADDRESS=$(ipconfig getifaddr en0)
+  ;;
+  linux-gnu)
+    IP_ADDRESS=$(ifconfig eth0 | grep inet | grep -v inet6 | awk '{print $2}')
+  ;;
+esac
+export IP_ADDRESS
 
 export VAULT_ADDR="http://${IP_ADDRESS}:8200"
 export VAULT_TOKEN=${VAULT_ROOT_TOKEN:-"notsosecure"}
@@ -13,7 +24,8 @@ export VAULT_ADMIN_PW=notsosecure
 export DYNAMIC_DEFAULT_TTL="${DYNAMIC_DEFAULT_TTL:-1m}"
 export DYNAMIC_MAX_TTL="24h"
 
-export PGHOST=${IP_ADDRESS}
+export POSTGRES_IMAGE=postgres:11
+export PGHOST=${PGHOST:-${IP_ADDRESS}}
 export PGPORT=5432
 export PGDATABASE=mother
 export PGUSER=postgres
@@ -51,7 +63,7 @@ export USER_PASSWORD=${USER_PASSWORD:-"thispasswordsucks"}
 
 # For running psql from the postgres docker container.  
 # Why an alias?  Try running this as a function with quoted strings as arguments
-alias psql='docker run --rm -it --entrypoint=/usr/bin/psql -e COLUMNS=${PGCOLUMNS} -e PGHOST=${PGHOST} -e PGDATABASE=${PGDATABASE} -e PGUSER=${PGUSER} -e PGPASSWORD=${PGPASSWORD} postgres -c "${QUERY}" ${PG_OPTIONS}'
+alias psql='docker run --rm -it --entrypoint=/usr/bin/psql -e COLUMNS=${PGCOLUMNS} -e PGHOST=${PGHOST} -e PGDATABASE=${PGDATABASE} -e PGUSER=${PGUSER} -e PGPASSWORD=${PGPASSWORD} ${POSTGRES_IMAGE} -c "${QUERY}" ${PG_OPTIONS}'
 
 # This is for the time to wait when using demo_magic.sh
 if [[ -z ${DEMO_WAIT} ]];then

@@ -1,24 +1,16 @@
-. env.sh 
+. env.sh
 
-green "Enable the KV V2 Secret Engine"
-pe "vault secrets enable -path=${KV_PATH} -version=${KV_VERSION} kv"
-
-green "Enable/configure the Transit Secret Engine (Encryption as a Service)"
-pe "vault secrets enable -path=${TRANSIT_PATH} transit"
-
-green "Create a transit key for the HR team."
-pe "vault write -f ${TRANSIT_PATH}/keys/hr"
-
-green "Enable/configure database engine"
+echo
+cyan "Running: $0: Enable/configure database engine"
 pe "vault secrets enable -path=${DB_PATH} database"
 
 green "Configure the account that Vault will use to manage credentials in Postgres."
 cat << EOF
-vault write ${DB_PATH}/config/${PGDATABASE} 
-    plugin_name=postgresql-database-plugin 
-    allowed_roles=* 
-    connection_url="postgresql://{{username}}:{{password}}@${IP_ADDRESS}:${PGPORT}/${PGDATABASE}?sslmode=disable" 
-    username="${VAULT_ADMIN_USER}" 
+vault write ${DB_PATH}/config/${PGDATABASE}
+    plugin_name=postgresql-database-plugin
+    allowed_roles=*
+    connection_url="postgresql://{{username}}:{{password}}@${IP_ADDRESS}:${PGPORT}/${PGDATABASE}?sslmode=disable"
+    username="${VAULT_ADMIN_USER}"
     password="${VAULT_ADMIN_PW}"
 EOF
 p
@@ -37,10 +29,10 @@ yellow "There are 1m and 1h credential endpoints.  1m are great for demo'ing so 
 echo
 green "Full read can be used by security teams to scan for credentials in any schema"
 cat << EOF
-vault write ${DB_PATH}/roles/${PGDATABASE}-full-read-1m 
-    db_name=${PGDATABASE} 
-    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA public,it,hr,security,finance,engineering TO \"{{name}}\"; GRANT SELECT ON ALL TABLES IN SCHEMA public,it,hr,security,finance,engineering TO "{{name}}";" 
-    default_ttl=1m 
+vault write ${DB_PATH}/roles/${PGDATABASE}-full-read-1m
+    db_name=${PGDATABASE}
+    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA public,it,hr,security,finance,engineering TO \"{{name}}\"; GRANT SELECT ON ALL TABLES IN SCHEMA public,it,hr,security,finance,engineering TO "{{name}}";"
+    default_ttl=1m
     max_ttl=24h
 EOF
 p
@@ -51,11 +43,12 @@ vault write ${DB_PATH}/roles/${PGDATABASE}-full-read-1m \
     default_ttl=1m \
     max_ttl=24h
 
+
 cat << EOF
-vault write ${DB_PATH}/roles/${PGDATABASE}-full-read-1h 
-    db_name=${PGDATABASE} 
-    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA public,it,hr,security,finance,engineering TO \"{{name}}\"; GRANT SELECT ON ALL TABLES IN SCHEMA public,it,hr,security,finance,engineering TO "{{name}}";" 
-    default_ttl=1h 
+vault write ${DB_PATH}/roles/${PGDATABASE}-full-read-1h
+    db_name=${PGDATABASE}
+    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA public,it,hr,security,finance,engineering TO \"{{name}}\"; GRANT SELECT ON ALL TABLES IN SCHEMA public,it,hr,security,finance,engineering TO "{{name}}";"
+    default_ttl=1h
     max_ttl=24h
 EOF
 p
@@ -69,10 +62,10 @@ vault write ${DB_PATH}/roles/${PGDATABASE}-full-read-1h \
 echo
 green "HR will only be granted full access to their schema"
 cat << EOF
-vault write ${DB_PATH}/roles/${PGDATABASE}-hr-full-1m 
-    db_name=${PGDATABASE} 
-    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA hr TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA hr TO "{{name}}";" 
-    default_ttl=1m 
+vault write ${DB_PATH}/roles/${PGDATABASE}-hr-full-1m
+    db_name=${PGDATABASE}
+    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA hr TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA hr TO "{{name}}";"
+    default_ttl=1m
     max_ttl=24h
 EOF
 p
@@ -84,10 +77,10 @@ vault write ${DB_PATH}/roles/${PGDATABASE}-hr-full-1m \
     max_ttl=24h
 
 cat << EOF
-vault write ${DB_PATH}/roles/${PGDATABASE}-hr-full-1h 
-    db_name=${PGDATABASE} 
-    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA hr TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA hr TO "{{name}}";" 
-    default_ttl=1h 
+vault write ${DB_PATH}/roles/${PGDATABASE}-hr-full-1h
+    db_name=${PGDATABASE}
+    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA hr TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA hr TO "{{name}}";"
+    default_ttl=1h
     max_ttl=24h
 EOF
 p
@@ -101,10 +94,10 @@ vault write ${DB_PATH}/roles/${PGDATABASE}-hr-full-1h \
 echo
 green "Engineering will be given full access to their schema"
 cat << EOF
-vault write ${DB_PATH}/roles/${PGDATABASE}-engineering-full-1m 
-    db_name=${PGDATABASE} 
-    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA engineering TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA engineering TO "{{name}}";" 
-    default_ttl=1m 
+vault write ${DB_PATH}/roles/${PGDATABASE}-engineering-full-1m
+    db_name=${PGDATABASE}
+    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA engineering TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA engineering TO "{{name}}";"
+    default_ttl=1m
     max_ttl=24h
 EOF
 p
@@ -116,10 +109,10 @@ vault write ${DB_PATH}/roles/${PGDATABASE}-engineering-full-1m \
     max_ttl=24h
 
 cat << EOF
-vault write ${DB_PATH}/roles/${PGDATABASE}-engineering-full-1h 
-    db_name=${PGDATABASE} 
-    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA engineering TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA engineering TO "{{name}}";" 
-    default_ttl=1h 
+vault write ${DB_PATH}/roles/${PGDATABASE}-engineering-full-1h
+    db_name=${PGDATABASE}
+    creation_statements="CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA engineering TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA engineering TO "{{name}}";"
+    default_ttl=1h
     max_ttl=24h
 EOF
 p
@@ -129,4 +122,3 @@ vault write ${DB_PATH}/roles/${PGDATABASE}-engineering-full-1h \
     creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT USAGE ON SCHEMA engineering TO \"{{name}}\"; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA engineering TO \"{{name}}\";" \
     default_ttl=1h \
     max_ttl=24h
-
