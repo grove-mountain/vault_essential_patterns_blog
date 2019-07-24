@@ -14,15 +14,15 @@ pe "vault login -method=ldap -path=ldap-mo username=frank password=${USER_PASSWO
 green "Read out the dynamic DB credentials and store them as variables"
 echo
 green "Getting dynamic db credentials from Vault. There are more elegant ways of doing this, but this shows the process well"
-pe "vault read -format=json db-blog/creds/mother-hr-full-1h | jq -r '.data | to_entries | .[] | .key + \"=\" + .value ' > temp_creds"
-pe ". temp_creds"
+pe "vault read -format=json db-blog/creds/mother-hr-full-1h | jq -r '.data | .[\"PGUSER\"] = .username | .[\"PGPASSWORD\"] = .password | del(.username, .password) | to_entries | .[] | .key + \"=\" + .value ' > .temp_db_creds"
+pe ". .temp_db_creds && rm .temp_db_creds"
 
 green "By setting the postgres environment variables to the dynamic creds, we can run PSQL with those dynamic creds"
-pe "export PGUSER=$username PGPASSWORD=$password"
+pe "export PGUSER=${PGUSER} PGPASSWORD=${PGPASSWORD}"
 
 green "Turn off globbing for the database query in an environment variable so it doesn't pick up file names instead"
 pe "set -o noglob"
-pe "QUERY='select * from hr.people;'"
+pe "QUERY='select email,id from hr.people;'"
 pe "psql"
 
 green "Find an existing user id and encrypt it"
@@ -40,7 +40,7 @@ pe "QUERY=\"UPDATE hr.people SET id='\${enc_id}' WHERE email='alice@ourcorp.com'
 pe "psql"
 
 # Turn off headings and aligned output
-pe "QUERY=\"select * from hr.people\""
+pe "QUERY=\"select email,id from hr.people\""
 pe "psql"
 
 green "This is the process your applications will use when data is encrypted with Vault"
@@ -54,7 +54,7 @@ pe "user_id=\$(vault write -field=plaintext transit-blog/decrypt/hr ciphertext=\
 pe "echo \${user_id}"
 
 green "Notice the value is still encrypted in the database.   It should only decrypted by your applications when needed to be displayed"
-pe "QUERY=\"select * from hr.people\""
+pe "QUERY=\"select email,id from hr.people\""
 pe "psql"
 
 echo

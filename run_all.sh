@@ -8,3 +8,4 @@ done
 ./test_it.sh
 ./test_engineering.sh
 ./test_hr.sh
+./shutdown.sh

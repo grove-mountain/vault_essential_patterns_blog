@@ -61,10 +61,6 @@ export MO_GROUP_ATTR=${MO_GROUP_ATTR:-"memberOf"}
 # This is the default user password created by the default ldif creator if none other is specified
 export USER_PASSWORD=${USER_PASSWORD:-"thispasswordsucks"}
 
-# For running psql from the postgres docker container.  
-# Why an alias?  Try running this as a function with quoted strings as arguments
-alias psql='docker run --rm -it --entrypoint=/usr/bin/psql -e COLUMNS=${PGCOLUMNS} -e PGHOST=${PGHOST} -e PGDATABASE=${PGDATABASE} -e PGUSER=${PGUSER} -e PGPASSWORD=${PGPASSWORD} ${POSTGRES_IMAGE} -c "${QUERY}" ${PG_OPTIONS}'
-
 # This is for the time to wait when using demo_magic.sh
 if [[ -z ${DEMO_WAIT} ]];then
   DEMO_WAIT=0
@@ -73,3 +69,42 @@ fi
 # Demo magic gives wrappers for running commands in demo mode.   Also good for learning via CLI.
 
 . demo-magic.sh -d -p -w ${DEMO_WAIT}
+
+### FUNCTIONS ### 
+# For running psql from the postgres docker container.  
+psql () {
+docker run --rm -it --entrypoint=/usr/bin/psql \
+  -e COLUMNS=${PGCOLUMNS} \
+  -e PGHOST=${PGHOST} \
+  -e PGDATABASE=${PGDATABASE} \
+  -e PGUSER=${PGUSER} \
+  -e PGPASSWORD=${PGPASSWORD} \
+  ${POSTGRES_IMAGE} \
+  -c "${QUERY}" ${PG_OPTIONS}
+}
+
+
+# For writing Dynamic DB roles
+write_db_role () {
+ROLE=${PGDATABASE}-${ROLE_NAME}-${TTL}
+cat << EOF
+CREATION_STATEMENT=${CREATION_STATEMENT}
+
+vault write ${DB_PATH}/roles/${ROLE}
+    db_name=${PGDATABASE}
+    creation_statements="$(echo ${CREATION_STATEMENT})"
+    default_ttl=${TTL}
+    max_ttl=${MAX_TTL}
+EOF
+p
+
+vault write ${DB_PATH}/roles/${ROLE} \
+    db_name=${PGDATABASE} \
+    creation_statements="$(echo ${CREATION_STATEMENT})" \
+    default_ttl=${TTL} \
+    max_ttl=${MAX_TTL}
+echo
+
+}
+
+

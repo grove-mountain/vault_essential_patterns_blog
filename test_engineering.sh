@@ -28,7 +28,7 @@ pe "export PGUSER=${PGUSER} PGPASSWORD=${PGPASSWORD}"
 
 green "Turn off globbing for the database query in an environment variable"
 pe "set -o noglob"
-pe "QUERY='select * from engineering.catalog;'"
+pe "QUERY='select name,description from engineering.catalog;'"
 pe "psql"
 
 green "Use the dynamic ACL policy to write to a KV location under this user name"

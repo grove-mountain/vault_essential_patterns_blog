@@ -24,29 +24,6 @@ vault write ${DB_PATH}/config/${PGDATABASE} \
 #green "Rotate the credentials for ${VAULT_ADMIN_USER} so no human has access to them anymore"
 #pe "vault write -force ${DB_PATH}/rotate-root/${PGDATABASE}"
 
-# DRYer?
-write_db_role () {
-ROLE=${PGDATABASE}-${ROLE_NAME}-${TTL}
-cat << EOF
-CREATION_STATEMENT=${CREATION_STATEMENT}
-
-vault write ${DB_PATH}/roles/${ROLE}
-    db_name=${PGDATABASE}
-    creation_statements="$(echo ${CREATION_STATEMENT})"
-    default_ttl=${TTL}
-    max_ttl=${MAX_TTL}
-EOF
-p
-
-vault write ${DB_PATH}/roles/${ROLE} \
-    db_name=${PGDATABASE} \
-    creation_statements="$(echo ${CREATION_STATEMENT})" \
-    default_ttl=${TTL} \
-    max_ttl=${MAX_TTL}
-echo
-
-}
-
 green "Configure the Vault/Postgres database roles with time bound credential templates"
 echo
 yellow "There are 1m and 1h credential endpoints.  1m are great for demo'ing so you can see them expire"
