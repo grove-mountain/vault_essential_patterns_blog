@@ -49,3 +49,8 @@ Alternatively you can run each numbered file in succession and then each test fi
 ./test_engineering.sh
 ./test_hr.sh
 ```
+
+Finish with:
+```
+./shutdown.sh
+```
