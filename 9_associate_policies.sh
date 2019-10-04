@@ -11,5 +11,7 @@ pe "vault write auth/ldap-um/groups/security policies=db-full-read,kv-user-templ
 # MemberOf configs
 green "Setup MemberOf group logins for LDAP.   Need to use the entire DN for the group here as these are in the user's attributes"
 echo
-pe "vault write auth/ldap-mo/groups/cn=hr,ou=um_group,dc=ourcorp,dc=com policies=db-hr,transit-hr,kv-user-template"
-pe "vault write auth/ldap-mo/groups/cn=engineering,ou=um_group,dc=ourcorp,dc=com policies=db-engineering,kv-user-template"
+#pe "vault write auth/ldap-mo/groups/cn=hr,ou=um_group,dc=ourcorp,dc=com policies=db-hr,transit-hr,kv-user-template"
+#pe "vault write auth/ldap-mo/groups/cn=engineering,ou=um_group,dc=ourcorp,dc=com policies=db-engineering,kv-user-template"
+pe "vault write auth/ldap-mo/groups/hr policies=db-hr,transit-hr,kv-user-template"
+pe "vault write auth/ldap-mo/groups/engineering policies=db-engineering,kv-user-template"
